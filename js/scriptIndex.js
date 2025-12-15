@@ -47,6 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("postJobModal"),
   );
 
+
+  if(postBtn != null && getCookie('role') == 'admin') {
   document.getElementById("post-button").addEventListener("click", () => {
     postJobModal.show();
   });
@@ -103,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error(err); // alert("Network error");
       }
     });
+  }
 
   let page = 1;
   let searchPage = 1;
