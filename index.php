@@ -81,7 +81,7 @@ $router->add(
 
 
 $router->add('POST', '/api/auth/register', [Auth::class, 'register']);
-$router->add('POST', '/api/auth/login', [Auth::class, 'login'], [[AlreadyLogin::class, 'validate']]);
+$router->add('POST', '/api/auth/login', [Auth::class, 'login']);
 $router->add('GET',  '/api/auth/me', [Auth::class, 'me'], [[RequireAuth::class, 'validate']]);
 $router->add('POST', '/api/auth/logout', [Auth::class, 'logout'], [[RequireAuth::class, 'validate']]);
 
