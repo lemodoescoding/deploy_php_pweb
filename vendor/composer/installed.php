@@ -3,7 +3,7 @@
         'name' => 'dfyta9/fp-pweb',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '0ff2725efb38c68d99864bac24f22ecd950c4e05',
+        'reference' => 'd30f76b6a265a79170b1bad562d83395d6545499',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -157,7 +157,7 @@
         'dfyta9/fp-pweb' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '0ff2725efb38c68d99864bac24f22ecd950c4e05',
+            'reference' => 'd30f76b6a265a79170b1bad562d83395d6545499',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
