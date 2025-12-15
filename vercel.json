@@ -1,6 +1,6 @@
 {
   "functions": {
-    "public/**/*.php": { "runtime": "vercel-php@0.6.2" }
+    "api/**/*.php": { "runtime": "vercel-php@0.6.2" }
   },
   "routes": [{ "src": "/(.*)", "dest": "/public/index.php" }]
 }
