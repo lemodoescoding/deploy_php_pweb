@@ -5,7 +5,7 @@ declare(strict_types=1);
 session_start();
 
 // DISABLE THIS WHEN IN DEV MODE
-error_reporting(~E_ALL & ~E_WARNING & ~E_NOTICE);
+// error_reporting(~E_ALL & ~E_WARNING & ~E_NOTICE);
 
 if (php_sapi_name() === 'cli-server') {
   $path = __DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -14,6 +14,8 @@ if (php_sapi_name() === 'cli-server') {
     return false;
   }
 }
+
+define('BASE_PATH', dirname(__DIR__));
 
 require_once __DIR__ . '/../app/bootstrap.php';
 

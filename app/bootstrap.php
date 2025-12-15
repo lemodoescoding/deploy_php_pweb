@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once BASE_PATH . '/vendor/autoload.php';
 
 use App\Core\Env;
 
-Env::load(__DIR__ . '/../');
+Env::load(BASE_PATH);
