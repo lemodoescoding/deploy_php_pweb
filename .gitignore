@@ -1,0 +1,4 @@
+.env
+composer.lock
+storage/*
+client_secret_*
