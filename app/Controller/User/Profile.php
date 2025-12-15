@@ -209,6 +209,19 @@ class Profile
     exit;
   }
 
+  public function promote(array $user, int $userId): void
+  {
+    $userModel = new \App\Model\User(DB::getInstance());
+
+    if ($userModel->promoteUser($userId)) {
+      Response::success(null, StatusCodes::OK, "User role updated successfully.");
+    } else {
+      // User not found or deletion failed
+      Response::error(null, StatusCodes::INTERNAL_SERVER_ERROR, "Failed to unpromote user or user not found.");
+    }
+    exit;
+  }
+
   public function unpromote(array $user, int $userId): void
   {
     $userModel = new \App\Model\User(DB::getInstance());

@@ -50,11 +50,7 @@ async function deleteUser(userId) {
 }
 
 async function promoteUser(userId) {
-  if (
-    !confirm(
-      `Are you sure you want to promote User ID ${userId}?`,
-    )
-  ) {
+  if (!confirm(`Are you sure you want to promote User ID ${userId}?`)) {
     return;
   }
 
@@ -76,7 +72,17 @@ async function promoteUser(userId) {
     if (res.ok && json.status) {
       console.log(`User ${userId} promoted successfully.`);
 
-      rowElement.innerHTML = `<div class="col-5 d-flex align-items-center"><span class="fw-bold fs-6">admin</span></div>`;
+      rowElement.innerHTML = `
+                <div class="col-5 d-flex align-items-center">
+                    <div class="mini-avatar"></div>
+                    <span class="fw-bold fs-6">${user.username}</span>
+                </div>
+                <div class="col-5 d-flex align-items-center">
+                    <span class="fw-bold fs-6">${user.role}</span>
+                </div>
+                <div class="col-2 text-end action-links">
+                    <span class="action-link delete-btn" data-id="${user.id}" style="cursor: pointer; color: #dc3545;"><i class="fa-solid fa-trash"></i> Delete</span>
+                </div>`;
     } else {
       throw new Error(json.message || "Promotion failed on server.");
     }
@@ -159,7 +165,8 @@ document.addEventListener("DOMContentLoaded", function () {
       row.id = `user-row-${user.id}`;
       row.className = "list-row";
 
-      row.innerHTML = `
+      row.innerHTML =
+        `
                 <div class="col-5 d-flex align-items-center">
                     <div class="mini-avatar"></div>
                     <span class="fw-bold fs-6">${user.username}</span>
@@ -168,11 +175,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     <span class="fw-bold fs-6">${user.role}</span>
                 </div>
                 <div class="col-2 text-end action-links">
-                  <span class="action-link promote-btn" data-id="${user.id}" style="cursor: pointer;"><i class="fa-solid fa-arrow-up"></i> Promote</span>
+                ` +
+        (user.role != "admin"
+          ? `
+                    <span class="action-link promote-btn" data-id="${user.id}" style="cursor: pointer;"><i class="fa-solid fa-arrow-up"></i> Promote</span>
                   <br>
                     <span class="action-link delete-btn" data-id="${user.id}" style="cursor: pointer; color: #dc3545;"><i class="fa-solid fa-trash"></i> Delete</span>
+                `
+          : `
+                    <span class="action-link delete-btn" data-id="${user.id}" style="cursor: pointer; color: #dc3545;"><i class="fa-solid fa-trash"></i> Delete</span>
                 </div>
-            `;
+            `);
 
       userList.appendChild(row);
     });
