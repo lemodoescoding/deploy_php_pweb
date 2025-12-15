@@ -63,11 +63,14 @@
       </div>
 
       <?php if ($role == 'admin' && isset($role)): ?>
-        <button id="post-button" class="btn post-btn position-fixed">
+        <button id="post-button" style="display: none; visibility: hidden;" class="btn post-btn position-fixed">
           Post +
         </button>
-      <?php endif; ?>
-
+      <?php else: ?>
+        <button id="post-button" style="display: block; visibility: visible;" class="btn post-btn position-fixed">
+          Post +
+        </button>
+      <?php endif;?>
     </main>
   </div>
 

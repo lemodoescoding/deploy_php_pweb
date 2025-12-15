@@ -40,7 +40,6 @@ const postFeed = document.getElementById("post-feed");
 const contentArea = document.querySelector(".content");
 const searchBar = document.querySelector("#search-bar");
 const logoutBtn = document.querySelector("#btn-logout");
-const postBtn = document.getElementById("post-button");
 
 document.addEventListener("DOMContentLoaded", () => {
   const postJobModal = new bootstrap.Modal(
@@ -48,12 +47,12 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
 
-  if(postBtn != null && getCookie('role') == 'admin') {
-  document.getElementById("post-button").addEventListener("click", () => {
-    postJobModal.show();
-  });
+  const postBtn = document.getElementById("post-button");
+    document.getElementById("post-button").addEventListener("click", () => {
+      postJobModal.show();
+    });
 
-  document
+    document
     .getElementById("post-job-form")
     .addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -105,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error(err); // alert("Network error");
       }
     });
-  }
 
   let page = 1;
   let searchPage = 1;
