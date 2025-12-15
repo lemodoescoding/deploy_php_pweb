@@ -36,13 +36,14 @@ function clearStuckBackdrop() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const postFeed = document.getElementById("post-feed");
-  const contentArea = document.querySelector(".content");
-  const searchBar = document.querySelector("#search-bar");
-  const logoutBtn = document.querySelector("#btn-logout");
 
-  const postBtn = document.getElementById("post-button");
+const postFeed = document.getElementById("post-feed");
+const contentArea = document.querySelector(".content");
+const searchBar = document.querySelector("#search-bar");
+const logoutBtn = document.querySelector("#btn-logout");
+const postBtn = document.getElementById("post-button");
+
+document.addEventListener("DOMContentLoaded", () => {
 
     const postJobModal = new bootstrap.Modal(
       document.getElementById("postJobModal"),
