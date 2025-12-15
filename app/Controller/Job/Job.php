@@ -74,6 +74,34 @@ class Job
     Response::success($resp, StatusCodes::OK, "anjai");
   }
 
+  public function seedJobs(array $data, array $user): void
+  {
+    if (empty($data['categories']) || empty($data['countries']) || !isset($data['pages'])) {
+      Response::error(null, StatusCodes::BAD_REQUEST, "Missing required job seeding parameters (categories, countries, pages, or limit_per_category)");
+      exit;
+    }
+
+    $offset_page = $data['start_page'] ?? 1;
+    $categories = $data['categories'];
+    $countries = $data['countries'];
+    $pages = intval($data['pages']);
+
+    if (!is_array($categories) || !is_array($countries)) {
+      Response::error(null, StatusCodes::BAD_REQUEST, "Categories and countries must be arrays.");
+      exit;
+    }
+
+    try {
+      $resp = $this->jsd->seed($categories, $countries, $pages, $offset_page);
+
+      Response::success($resp, StatusCodes::OK, "Job seeding successful.");
+    } catch (\Throwable $e) {
+      Response::error($e->getMessage(), StatusCodes::INTERNAL_SERVER_ERROR, "Job seeding failed.");
+    }
+
+    exit;
+  }
+
   public function indexAll(): void
   {
     $jobs = $this->jb->all();

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Seeder;
 
 // use App\Core\DB;
+
+use App\Utils\GeoFetch;
 use App\Utils\JobsFetcher;
 
 use \PDO;
@@ -23,14 +25,12 @@ class JobSeeder
     $fetched = JobsFetcher::fetchJSearchJobs($categories, $countries, $pages, $start_page);
 
     foreach ($fetched as $categoryName => $jobs) {
-      echo "Processing category: {$categoryName}\n";
+      // echo "Processing category: {$categoryName}\n";
 
       $categoryId = $this->insertCategory($categoryName);
 
       foreach ($jobs as $job) {
         $this->storeJob($job, $categoryId);
-
-        usleep(500);
       }
     }
 
@@ -39,6 +39,10 @@ class JobSeeder
 
   private function storeJob(array $job, int $categoryId): void
   {
+    if (empty($job['employer_name'])) {
+      return; // Skip job
+    }
+
     $sourceId   = $this->insertSource('jsearch');
     $companyId  = $this->insertCompany($job);
     $locationId = $this->insertLocation($job);
@@ -69,13 +73,14 @@ class JobSeeder
             ON DUPLICATE KEY UPDATE logo = VALUES(logo), website = VALUES(website)
         ");
 
-    $stmt->bindValue(':name', $job['employer_name'], PDO::PARAM_STR);
+    $companyName = $job['employer_name'] ?? 'Unknown Company';
+    $stmt->bindValue(':name', $companyName, PDO::PARAM_STR);
     $stmt->bindValue(':logo', $job['employer_logo'], PDO::PARAM_STR);
     $stmt->bindValue(':website', $job['employer_website'], PDO::PARAM_STR);
 
     $stmt->execute();
 
-    return (int) $this->db->lastInsertId() ?:
+    return (int) $this->db->lastInsertId() ??
       $this->getIdByField('companies', 'name', $job['employer_name']);
   }
 
@@ -179,12 +184,48 @@ class JobSeeder
             LIMIT 1
         ");
 
-    $stmt->bindValue(':city', $job['city'], PDO::PARAM_STR);
-    $stmt->bindValue(':state', $job['state'], PDO::PARAM_STR);
-    $stmt->bindValue(':country', $job['country'], PDO::PARAM_STR);
+    $stmt->bindValue(':city', $job['city'] ?? "N/A", PDO::PARAM_STR);
+    $stmt->bindValue(':state', $job['state'] ?? "N/A", PDO::PARAM_STR);
+    $stmt->bindValue(':country', $job['country'] ?? "N/A", PDO::PARAM_STR);
 
     $stmt->execute();
 
     return (int) ($stmt->fetchColumn() ?: 0);
   }
+
+  private static function enrichWithCoordinates(array $job): array
+    {
+        // 1. Check if coordinates are already present and valid
+        if (isset($job['lat']) && $job['lat'] !== null && $job['lat'] != 0) {
+            return $job; // Coordinates are good, no need to fetch
+        }
+
+        // 2. Build the query string for GeoFetch
+        $locationQuery = '';
+        if (!empty($job['city']) && !empty($job['country'])) {
+            $locationQuery = "{$job['city']}, {$job['country']}";
+        } elseif (!empty($job['location'])) {
+            $locationQuery = $job['location']; // Fallback to the raw location string
+        }
+
+        if (empty($locationQuery)) {
+            return $job; // Cannot geocode without location data
+        }
+
+        // 3. Call the GeoFetch utility
+        $geoData = GeoFetch::getLatLon($locationQuery);
+
+        // 4. Process the response
+        if (!empty($geoData) && is_array($geoData)) {
+            // geocode.maps.co returns an array of matches, we take the first one
+            $firstMatch = $geoData[0] ?? null; 
+            
+            if ($firstMatch && isset($firstMatch['lat']) && isset($firstMatch['lon'])) {
+                $job['lat'] = floatval($firstMatch['lat']);
+                $job['lon'] = floatval($firstMatch['lon']);
+            }
+        }
+
+        return $job;
+    }
 }

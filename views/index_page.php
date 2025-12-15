@@ -8,6 +8,23 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/styleIndex.css" rel="stylesheet">
 
+    <style>
+    .profile-image-placeholder {
+      width: 100px;
+      height: 100px;
+      background-color: #e9e9e9;
+      /* Very light gray */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid white;
+      /* Border color */
+      box-shadow: 0 0 0 2px #ccc;
+      /* Ring effect */
+    }
+    </style>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
@@ -17,12 +34,14 @@
       <div class="p-3 user-profile">
         <div class="d-flex align-items-center mb-4">
           <a href="/updateProfile">
-            <svg class="profile-icon me-3" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.758 1.226 5.468 2.37A7 7 0 0 0 8 1" />
-            </svg>
+            <div class="profile-image-placeholder position-relative" id="profile-image-placeholder" style="margin-right: 15px;">
+              <img id="current-avatar" src="" alt="Avatar" class="rounded-circle w-100 h-100 object-fit-cover" style="display: none;">
+              <svg class="profile-icon me-3" id="photo-placeholder-icon" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.758 1.226 5.468 2.37A7 7 0 0 0 8 1" />
+              </svg>
+            </div>
           </a>
-
           <div>
             <a>
               <h5 class="m-0"><?= $username ?></h5>
@@ -63,11 +82,11 @@
       </div>
 
       <?php if ($role == 'admin' && isset($role)): ?>
-        <button id="post-button" style="display: none; visibility: hidden;" class="btn post-btn position-fixed">
+        <button id="post-button" style="display: block; visibility: visible;" class="btn post-btn position-fixed">
           Post +
         </button>
       <?php else: ?>
-        <button id="post-button" style="display: block; visibility: visible;" class="btn post-btn position-fixed">
+        <button id="post-button" style="display: none; visibility: hidden;" class="btn post-btn position-fixed">
           Post +
         </button>
       <?php endif;?>
@@ -78,11 +97,11 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Apply to Job</h5>
+         <h5 class="modal-title">Save Job</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          Are you sure you want to apply for this position?
+          Do you want to save this job?
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>

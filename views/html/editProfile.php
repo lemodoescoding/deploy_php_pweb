@@ -143,17 +143,14 @@
 <body>
 
   <div class="main-layout d-flex">
-    <aside class="sidebar">
+    <aside class="sidebar" style="width: 200px;">
       <div class="d-flex flex-column align-items-center w-100">
-        <a class="sidebar-box box-gray d-flex align-items-center justify-content-center text-white" title="Home" href="/">Home</a>
-          <?php if($role === 'admin'): ?>
-          <a class="sidebar-box box-blue d-flex align-items-center justify-content-center text-white" title="/admin" onclick="window.location.href = '/admin'">Dashboard</a>
-          <?php else: ?>
-          <a class="sidebar-box box-blue d-flex align-items-center justify-content-center text-white" title="/dashboard" onclick="window.location.href = '/dashboard'">Dashboard</a>
-          <?php endif; ?>
-      </div>
-      <div class="mt-auto">
-        <div class="sidebar-box box-blue mb-0 d-flex align-items-center justify-content-center text-white" title="Logout">Logout</div>
+        <a class="sidebar-box box-gray d-flex align-items-center justify-content-center text-white" style="width: 150px; font-size: 1rem;" title="Home" href="/">Home</a>
+        <?php if ($role === 'admin'): ?>
+          <a class="sidebar-box box-blue d-flex align-items-center justify-content-center text-white" title="/admin" style="width: 150px; font-size: 1rem;" onclick="window.location.href = '/admin'">Dashboard</a>
+        <?php else: ?>
+          <a class="sidebar-box box-blue d-flex align-items-center justify-content-center text-white" title="/dashboard" style="width: 150px; font-size: 1rem;" onclick="window.location.href = '/dashboard'">Dashboard</a>
+        <?php endif; ?>
       </div>
     </aside>
 
@@ -162,11 +159,19 @@
 
         <h3 class="fw-bold mb-4">Edit Profile</h3>
 
-        <div class="d-flex justify-content-center mb-5">
-          <div class="profile-image-placeholder">
-            <i class="fa-solid fa-pencil" style="color: #6c757d;"></i>
+        <form id="avatar-form" enctype="multipart/form-data">
+          <div class="d-flex justify-content-center mb-5 position-relative">
+            <div class="profile-image-placeholder position-relative" id="profile-image-placeholder">
+              <img id="current-avatar" src="" alt="Avatar" class="rounded-circle w-100 h-100 object-fit-cover" style="display: none;">
+              <i id="placeholder-icon" class="fa-solid fa-user-circle fa-2xl" style="color: #6c757d;"></i>
+              <div id="avatar-edit-overlay" class="position-absolute w-100 h-100 rounded-circle d-flex align-items-center justify-content-center"
+                style="background-color: rgba(0, 0, 0, 0.4); opacity: 0; transition: opacity 0.2s; cursor: pointer;">
+                <i class="fa-solid fa-pencil text-white"></i>
+              </div>
+            </div>
+            <input type="file" id="avatar-input" name="photo" accept="image/jpeg,image/png,image/webp" style="display: none;">
           </div>
-        </div>
+        </form>
 
         <form>
           <div class="d-flex align-items-center edit-input-group">

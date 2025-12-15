@@ -41,6 +41,9 @@ const contentArea = document.querySelector(".content");
 const searchBar = document.querySelector("#search-bar");
 const logoutBtn = document.querySelector("#btn-logout");
 
+const currentAvatar = document.getElementById("current-avatar");
+const placeholderIcon = document.getElementById("photo-placeholder-icon")
+
 document.addEventListener("DOMContentLoaded", () => {
   const postJobModal = new bootstrap.Modal(
     document.getElementById("postJobModal"),
@@ -680,3 +683,37 @@ document
       alert("A network error occurred during job update.");
     }
   });
+
+function renderUserProfile(data) {
+  if (data.profile && data.profile.photo) {
+    currentAvatar.src = data.profile.photo;
+    currentAvatar.style.display = "block";
+    placeholderIcon.style.display = "none";
+  } else {
+    currentAvatar.style.display = "none";
+    placeholderIcon.style.display = "block";
+  }
+
+  console.log("Profile data loaded:", data);
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const response = await fetch("/api/user/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${getCookie("api_token")}`,
+      },
+    });
+    const result = await response.json();
+
+    if (response.ok) {
+      renderUserProfile(result.data);
+    } else {
+      console.error("Failed to load profile data:", result.message);
+      // Optionally redirect to login or show an error state
+    }
+  } catch (error) {
+    console.error("Network error during profile load:", error);
+  }
+});

@@ -69,6 +69,13 @@ $router->add(
   [[RequireAuthView::class, 'validate']]
 );
 
+$router->add(
+  'GET',
+  '/jobseed',
+  [Page::class, 'jobSeed'],
+  [[RequireAuthView::class, 'validateAdmin']]
+);
+
 // API ROUTES
 // $router->add('GET', '/', [Test::class, "getUUID"]);
 
@@ -87,7 +94,8 @@ $router->add('GET', '/api/admin/user/{id}', [Admin::class, 'viewUser'], [[Requir
 $router->add('PUT', '/api/admin/user/{id}/role', [Admin::class, 'updateRole'], [[RequireAuth::class, 'validateAdmin']]);
 $router->add('DELETE', '/api/admin/user/{id}', [Admin::class, 'deleteUser'], [[RequireAuth::class, 'validateAdmin']]);
 
-$router->add('GET', '/api/jobs/test', [Job::class, 'run']);
+// $router->add('GET', '/api/jobs/test', [Job::class, 'run']);
+$router->add('POST', '/api/jobs/populate', [Job::class, 'seedJobs'], [[ParseJSON::class, 'parse'], [RequireAuth::class, 'validateAdmin']]);
 $router->add('GET', '/api/jobs/page/{id}', [Job::class, 'index']);
 $router->add('POST', '/api/jobs/create', [Job::class, 'addJobManual'], [[RequireAuth::class, 'validateAdmin'], [ParseJSON::class, 'parse']]);
 $router->add('GET', '/api/jobs/show/{id}', [Job::class, 'show']);
@@ -105,6 +113,8 @@ $router->add('GET', '/api/applications/{id}', [Application::class, 'show'], [[Re
 // $router->add('GET', '/api/category/{category}/{page}', [Category::class, 'searchPaginated']);
 
 $router->add('GET', '/api/user/profile', [Profile::class, 'show'], [[RequireAuth::class, 'validate']]);
+$router->add('DELETE', '/api/user/delete/{id}', [Profile::class, 'delete'], [[RequireAuth::class, 'validateAdmin']]);
+$router->add('PUT', '/api/user/promote/{id}', [Profile::class, 'promote'], [[RequireAuth::class, 'validateAdmin']]);
 $router->add('POST', '/api/profile/avatar', [Profile::class, 'updateAvatar'], [[RequireAuth::class, 'validate']]);
 $router->add('PUT', '/api/profile/placeholder', [Profile::class, 'updatePlaceholder'], [[ParseJSON::class, 'parse'], [RequireAuth::class, 'validate']]);
 $router->add('PUT', '/api/profile/profile', [Profile::class, 'updateBio'], [[ParseJSON::class, 'parse'], [RequireAuth::class, 'validate']]);

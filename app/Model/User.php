@@ -175,4 +175,64 @@ class User extends Model
       return false;
     }
   }
+
+  public function deleteUser(int $userId): bool
+  {
+    try {
+      $stmt = $this->db->prepare("
+            DELETE FROM users
+            WHERE id = :id
+        ");
+
+      $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
+      $stmt->execute();
+
+      // Check if exactly one row was affected (the user was deleted)
+      return $stmt->rowCount() === 1;
+    } catch (\PDOException $e) {
+      return false;
+    } catch (\Throwable $e) {
+      return false;
+    }
+  }
+
+  public function promoteUser(int $userId): bool
+  {
+    try {
+      $stmt = $this->db->prepare("
+            UPDATE users SET role = 'admin'
+            WHERE id = :id
+        ");
+
+      $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
+      $stmt->execute();
+
+      // Check if exactly one row was affected (the user was deleted)
+      return $stmt->rowCount() === 1;
+    } catch (\PDOException $e) {
+      return false;
+    } catch (\Throwable $e) {
+      return false;
+    }
+  }
+
+  public function unpromoteUser(int $userId): bool
+  {
+    try {
+      $stmt = $this->db->prepare("
+            UPDATE users SET role = 'user'
+            WHERE id = :id
+        ");
+
+      $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
+      $stmt->execute();
+
+      // Check if exactly one row was affected (the user was deleted)
+      return $stmt->rowCount() === 1;
+    } catch (\PDOException $e) {
+      return false;
+    } catch (\Throwable $e) {
+      return false;
+    }
+  }
 }

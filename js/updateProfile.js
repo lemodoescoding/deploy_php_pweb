@@ -8,7 +8,6 @@ function getCookie(name) {
 
   return cookieMap[name];
 }
-// --- DOM Elements ---
 const callnameInput = document.querySelector('input[value="Callname"]');
 const usernameInput = document.querySelector('input[value="Username"]');
 const bioTextarea = document.querySelector(
@@ -18,15 +17,22 @@ const educationInput = document.querySelector('input[value="Education"]');
 const profileForm = document.querySelector("form");
 const sidebarLogoutBtn = document.querySelector(
   ".sidebar .mt-auto .sidebar-box",
-); // Logout button in the sidebar
+);
 
-// --- API Endpoints ---
+const avatarForm = document.getElementById("avatar-form");
+const avatarInput = document.getElementById("avatar-input");
+const profileImagePlaceholder = document.getElementById(
+  "profile-image-placeholder",
+);
+const currentAvatar = document.getElementById("current-avatar");
+const placeholderIcon = document.getElementById("placeholder-icon");
+const avatarEditOverlay = document.getElementById("avatar-edit-overlay");
+
 const API_PROFILE_FETCH = "/api/user/profile";
 const API_PROFILE_UPDATE = "/api/profile/profile";
 const API_LOGOUT = "/api/auth/logout"; // POST for logout
 const API_PROFILE_PLACEHOLDER = "/api/profile/placeholder";
 
-// --- Function to Load User Data ---
 async function loadUserData() {
   const token = getCookie("api_token");
   if (!token) {
@@ -56,7 +62,6 @@ async function loadUserData() {
   }
 }
 
-// --- Function to Handle Form Submission (Save) ---
 async function handleFormSubmit(e) {
   e.preventDefault();
 
@@ -75,8 +80,8 @@ async function handleFormSubmit(e) {
   };
 
   // Check if any critical field is empty
-  if (!payload.callname || !payload.username) {
-    alert("Callname and Username are required.");
+  if (!payload.callname) {
+    alert("Callname are required.");
     return;
   }
 
@@ -160,3 +165,99 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebarLogoutBtn.addEventListener("click", handleLogout);
   }
 });
+
+// UPLOAD AVATAR
+
+function renderUserProfile(data) {
+  if (data.profile && data.profile.photo) {
+    currentAvatar.src = data.profile.photo;
+    currentAvatar.style.display = "block";
+    placeholderIcon.style.display = "none";
+  } else {
+    currentAvatar.style.display = "none";
+    placeholderIcon.style.display = "block";
+  }
+
+  console.log("Profile data loaded:", data);
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const response = await fetch("/api/user/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${getCookie("api_token")}`,
+      },
+    });
+    const result = await response.json();
+
+    if (response.ok) {
+      renderUserProfile(result.data);
+    } else {
+      console.error("Failed to load profile data:", result.message);
+      // Optionally redirect to login or show an error state
+    }
+  } catch (error) {
+    console.error("Network error during profile load:", error);
+  }
+});
+
+profileImagePlaceholder.addEventListener("click", () => {
+  avatarInput.click();
+});
+
+profileImagePlaceholder.addEventListener("mouseenter", () => {
+  avatarEditOverlay.style.opacity = 1;
+});
+profileImagePlaceholder.addEventListener("mouseleave", () => {
+  avatarEditOverlay.style.opacity = 0;
+});
+
+avatarInput.addEventListener("change", async () => {
+  if (avatarInput.files.length > 0) {
+    const file = avatarInput.files[0];
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      alert("Invalid file type. Only JPG, PNG, and WebP are allowed.");
+      avatarInput.value = "";
+      return;
+    }
+
+    const formData = new FormData(avatarForm);
+
+    placeholderIcon.classList.remove("fa-user-circle");
+    placeholderIcon.classList.add("fa-spinner", "fa-spin");
+
+    try {
+      const response = await fetch("/api/profile/avatar", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${getCookie("api_token")}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Avatar updated successfully!");
+        currentAvatar.src = result.data.avatar; // Use the path returned from PHP
+        currentAvatar.style.display = "block";
+        placeholderIcon.style.display = "none";
+      } else {
+        alert(`Error: ${result.message || "Failed to upload photo."}`);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("A network error occurred during upload.");
+    } finally {
+      // Reset loading state
+      placeholderIcon.classList.remove("fa-spinner", "fa-spin");
+      placeholderIcon.classList.add("fa-user-circle");
+      avatarInput.value = ""; // Clear input for next upload
+    }
+  }
+});
+
+

@@ -81,7 +81,6 @@ class Profile
       Response::error(null, StatusCodes::BAD_REQUEST, 'Invalid image type');
     }
 
-    // ✅ Generate safe unique filename
     $extension = match ($mime) {
       'image/jpeg' => 'jpg',
       'image/png'  => 'png',
@@ -96,7 +95,7 @@ class Profile
       $extension
     );
 
-    $uploadDir = __DIR__ . '/../../../public/uploads/photo_profiles/';
+    $uploadDir = __DIR__ . '/../../../storage/photo_profiles/';
     if (!is_dir($uploadDir)) {
       mkdir($uploadDir, 0755, true);
     }
@@ -107,8 +106,7 @@ class Profile
       Response::error(null, StatusCodes::INTERNAL_SERVER_ERROR, 'Failed to save image');
     }
 
-    // ✅ Store relative path in DB
-    $avatarPath = '/uploads/photo_profiles/' . $filename;
+    $avatarPath = '/storage/photo_profiles/' . $filename;
 
     $updated = $this->profile->updatePhoto($userId, $avatarPath);
 
@@ -195,6 +193,32 @@ class Profile
       Response::error(null, StatusCodes::BAD_REQUEST, 'Job history update failed');
     }
 
+    exit;
+  }
+
+  public function delete(array $user, int $userId): void
+  {
+    $userModel = new \App\Model\User(DB::getInstance());
+
+    if ($userModel->deleteUser($userId)) {
+      Response::success(null, StatusCodes::OK, "User and all associated data deleted successfully.");
+    } else {
+      // User not found or deletion failed
+      Response::error(null, StatusCodes::INTERNAL_SERVER_ERROR, "Failed to delete user or user not found.");
+    }
+    exit;
+  }
+
+  public function unpromote(array $user, int $userId): void
+  {
+    $userModel = new \App\Model\User(DB::getInstance());
+
+    if ($userModel->unpromoteUser($userId)) {
+      Response::success(null, StatusCodes::OK, "User role updated successfully.");
+    } else {
+      // User not found or deletion failed
+      Response::error(null, StatusCodes::INTERNAL_SERVER_ERROR, "Failed to unpromote user or user not found.");
+    }
     exit;
   }
 }

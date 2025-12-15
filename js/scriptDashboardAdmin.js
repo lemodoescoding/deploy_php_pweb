@@ -9,7 +9,85 @@ function getCookie(name) {
   return cookieMap[name];
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+async function deleteUser(userId) {
+  if (
+    !confirm(
+      `Are you sure you want to delete User ID ${userId} and ALL associated data? This action cannot be undone.`,
+    )
+  ) {
+    return;
+  }
+
+  const rowElement = document.getElementById(`user-row-${userId}`);
+  rowElement.style.opacity = "0.5";
+
+  try {
+    const token = getCookie("api_token");
+
+    const res = await fetch(`/api/user/delete/${userId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    const json = await res.json();
+
+    if (res.ok && json.status) {
+      console.log(`User ${userId} deleted successfully.`);
+
+      rowElement.remove();
+      updateStats();
+      alert(`User ${userId} deleted.`);
+    } else {
+      throw new Error(json.message || "Deletion failed on server.");
+    }
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    alert("Failed to delete user. Check console for details.");
+    rowElement.style.opacity = "1"; // Restore opacity on failure
+  }
+}
+
+async function promoteUser(userId) {
+  if (
+    !confirm(
+      `Are you sure you want to promote User ID ${userId}?`,
+    )
+  ) {
+    return;
+  }
+
+  const rowElement = document.getElementById(`user-row-${userId}`);
+  rowElement.style.opacity = "0.5";
+
+  try {
+    const token = getCookie("api_token");
+
+    const res = await fetch(`/api/user/promote/${userId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    const json = await res.json();
+
+    if (res.ok && json.status) {
+      console.log(`User ${userId} promoted successfully.`);
+
+      rowElement.innerHTML = `<div class="col-5 d-flex align-items-center"><span class="fw-bold fs-6">admin</span></div>`;
+    } else {
+      throw new Error(json.message || "Promotion failed on server.");
+    }
+  } catch (err) {
+    console.error("Error promoting user:", err);
+    alert("Failed to promote user. Check console for details.");
+    rowElement.style.opacity = "1"; // Restore opacity on failure
+  }
+}
+
+const updateStats = async () => {
   const statsContainer = document.getElementById("admin-stats");
 
   try {
@@ -66,12 +144,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log(err);
     statsContainer.innerHTML = `<div class="text-danger">Failed to load stats</div>`;
   }
-});
+};
+document.addEventListener("DOMContentLoaded", updateStats);
 
 document.addEventListener("DOMContentLoaded", function () {
-  const progressBars = document.querySelectorAll(".progress-bar");
-  const logoutBtn = document.querySelector("#btn-logout");
-
   const userList = document.getElementById("user-list");
 
   const renderUsers = (users) => {
@@ -79,22 +155,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
     users.forEach((user) => {
       const row = document.createElement("div");
+      // 1. Add a unique ID to the row for easy DOM manipulation after deletion
+      row.id = `user-row-${user.id}`;
       row.className = "list-row";
 
       row.innerHTML = `
-        <div class="col-5 d-flex align-items-center">
-          <div class="mini-avatar"></div>
-          <span class="fw-bold fs-6">${user.username}</span>
-        </div>
-        <div class="col-5 d-flex align-items-center">
-          <span class="fw-bold fs-6">${user.role}</span>
-        </div>
-        <div class="col-2 text-end">
-          <a href="/api/admin/users/${user.id}" class="see-more-link">See More</a>
-        </div>
-      `;
+                <div class="col-5 d-flex align-items-center">
+                    <div class="mini-avatar"></div>
+                    <span class="fw-bold fs-6">${user.username}</span>
+                </div>
+                <div class="col-5 d-flex align-items-center">
+                    <span class="fw-bold fs-6">${user.role}</span>
+                </div>
+                <div class="col-2 text-end action-links">
+                  <span class="action-link promote-btn" data-id="${user.id}" style="cursor: pointer;"><i class="fa-solid fa-arrow-up"></i> Promote</span>
+                  <br>
+                    <span class="action-link delete-btn" data-id="${user.id}" style="cursor: pointer; color: #dc3545;"><i class="fa-solid fa-trash"></i> Delete</span>
+                </div>
+            `;
 
       userList.appendChild(row);
+    });
+
+    attachDeleteListeners();
+  };
+
+  const attachDeleteListeners = () => {
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+    deleteButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault(); // Prevent any default action just in case
+        const userId = parseInt(btn.getAttribute("data-id"));
+        if (userId) {
+          deleteUser(userId);
+        }
+      });
+    });
+
+    const promoteButtons = document.querySelectorAll(".promote-btn");
+    promoteButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault(); // Prevent any default action just in case
+        const userId = parseInt(btn.getAttribute("data-id"));
+        if (userId) {
+          promoteUser(userId);
+        }
+      });
     });
   };
 
@@ -225,4 +331,41 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
   });
+});
+
+const currentAvatar = document.getElementById("current-avatar");
+const placeholderIcon = document.getElementById("photo-placeholder-icon");
+
+function renderUserProfile(data) {
+  if (data.profile && data.profile.photo) {
+    currentAvatar.src = data.profile.photo;
+    currentAvatar.style.display = "block";
+    placeholderIcon.style.display = "none";
+  } else {
+    currentAvatar.style.display = "none";
+    placeholderIcon.style.display = "block";
+  }
+
+  console.log("Profile data loaded:", data);
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const response = await fetch("/api/user/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${getCookie("api_token")}`,
+      },
+    });
+    const result = await response.json();
+
+    if (response.ok) {
+      renderUserProfile(result.data);
+    } else {
+      console.error("Failed to load profile data:", result.message);
+      // Optionally redirect to login or show an error state
+    }
+  } catch (error) {
+    console.error("Network error during profile load:", error);
+  }
 });

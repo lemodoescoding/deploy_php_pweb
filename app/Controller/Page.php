@@ -47,4 +47,9 @@ class Page
   {
     View::render('html/editProfile', $user);
   }
+
+  public function jobSeed(array $user): void
+  {
+    View::render('html/jobseed', $user);
+  }
 }
