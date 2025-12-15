@@ -36,7 +36,6 @@ function clearStuckBackdrop() {
   }
 }
 
-
 const postFeed = document.getElementById("post-feed");
 const contentArea = document.querySelector(".content");
 const searchBar = document.querySelector("#search-bar");
@@ -44,69 +43,66 @@ const logoutBtn = document.querySelector("#btn-logout");
 const postBtn = document.getElementById("post-button");
 
 document.addEventListener("DOMContentLoaded", () => {
+  const postJobModal = new bootstrap.Modal(
+    document.getElementById("postJobModal"),
+  );
 
-    const postJobModal = new bootstrap.Modal(
-      document.getElementById("postJobModal"),
-    );
+  document.getElementById("post-button").addEventListener("click", () => {
+    postJobModal.show();
+  });
 
-    postBtn.addEventListener("click", () => {
-      postJobModal.show();
-    });
+  document
+    .getElementById("post-job-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    document
-      .getElementById("post-job-form")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
+      const form = e.target;
 
-        const form = e.target;
+      const payload = {
+        title: form.title.value.trim(),
+        description: form.description.value.trim(),
+        category_name: form.category.value.trim(),
+        employer_name: form.employer_name.value.trim(),
+        employer_logo: form.employer_logo.value.trim(),
+        employer_website: form.employer_website.value.trim(),
+        apply_link: form.apply_link.value.trim(),
+        min_salary: form.min_salary.value || null,
+        max_salary: form.max_salary.value || null,
+        city: form.city.value,
+        state: form.state.value,
+        country: form.state.value,
+        is_remote: form.is_remote.checked ? 1 : 0,
+      };
 
-        const payload = {
-          title: form.title.value.trim(),
-          description: form.description.value.trim(),
-          category_name: form.category.value.trim(),
-          employer_name: form.employer_name.value.trim(),
-          employer_logo: form.employer_logo.value.trim(),
-          employer_website: form.employer_website.value.trim(),
-          apply_link: form.apply_link.value.trim(),
-          min_salary: form.min_salary.value || null,
-          max_salary: form.max_salary.value || null,
-          city: form.city.value,
-          state: form.state.value,
-          country: form.state.value,
-          is_remote: form.is_remote.checked ? 1 : 0,
-        };
+      try {
+        const token = getCookie("api_token");
 
-        try {
-          const token = getCookie("api_token");
+        console.log(token);
+        const res = await fetch("/api/jobs/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify(payload),
+        });
 
-          console.log(token);
-          const res = await fetch("/api/jobs/create", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-            body: JSON.stringify(payload),
-          });
+        const json = await res.json();
 
-          const json = await res.json();
-
-          if (!res.ok) {
-            alert(json.message || "Failed to post job");
-            return;
-          }
-
-          alert("Job posted successfully!");
-          form.reset();
-          postJobModal.hide();
-
-          clearStuckBackdrop();
-        } catch (err) {
-          console.error(err); // alert("Network error");
+        if (!res.ok) {
+          alert(json.message || "Failed to post job");
+          return;
         }
-      });
-  
 
+        alert("Job posted successfully!");
+        form.reset();
+        postJobModal.hide();
+
+        clearStuckBackdrop();
+      } catch (err) {
+        console.error(err); // alert("Network error");
+      }
+    });
 
   let page = 1;
   let searchPage = 1;
@@ -322,9 +318,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (res.status) {
           window.location.href = "/";
         }
+      });
   });
-});
-
 
   let selectedJobId = null;
 
@@ -370,7 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-   // APPLY AND VIEW
+  // APPLY AND VIEW
   document
     .getElementById("btnApplyJob")
     .addEventListener("click", async (e) => {
@@ -460,224 +455,227 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // DELETE
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest(
-        ".btn-delete-detail[data-bs-target='#deleteModal']",
-      );
-      if (!btn) return;
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(
+    ".btn-delete-detail[data-bs-target='#deleteModal']",
+  );
+  if (!btn) return;
 
-      const jobIdToDelete = btn.dataset.jobId;
-      const jobTitle = btn.dataset.title;
-      const jobContent = btn.dataset.content;
+  const jobIdToDelete = btn.dataset.jobId;
+  const jobTitle = btn.dataset.title;
+  const jobContent = btn.dataset.content;
 
-      if (!jobIdToDelete) {
-        console.error("Job ID not found for deletion.");
-        return;
-      }
+  if (!jobIdToDelete) {
+    console.error("Job ID not found for deletion.");
+    return;
+  }
 
-      // Set data attributes on the modal confirmation button
-      const modalConfirmBtn = document.getElementById("btnConfirmDelete");
-      if (modalConfirmBtn) {
-        modalConfirmBtn.dataset.jobId = jobIdToDelete;
-      }
+  // Set data attributes on the modal confirmation button
+  const modalConfirmBtn = document.getElementById("btnConfirmDelete");
+  if (modalConfirmBtn) {
+    modalConfirmBtn.dataset.jobId = jobIdToDelete;
+  }
 
-      // Populate the modal content with job details (if you have these elements)
-      const deleteModalTitle = document.getElementById("deleteModalTitle");
-      const deleteModalBody = document.getElementById("deleteModalBody");
+  // Populate the modal content with job details (if you have these elements)
+  const deleteModalTitle = document.getElementById("deleteModalTitle");
+  const deleteModalBody = document.getElementById("deleteModalBody");
 
-      if (deleteModalTitle) {
-        deleteModalTitle.innerText = `Delete Job: ${jobTitle}`;
-      }
-      if (deleteModalBody) {
-        deleteModalBody.innerHTML = `Are you sure you want to delete the job posting for **${jobTitle}**? This action cannot be undone.`;
-      }
-    });
+  if (deleteModalTitle) {
+    deleteModalTitle.innerText = `Delete Job: ${jobTitle}`;
+  }
+  if (deleteModalBody) {
+    deleteModalBody.innerHTML = `Are you sure you want to delete the job posting for **${jobTitle}**? This action cannot be undone.`;
+  }
+});
 
-    document
-      .querySelector("#deleteModal #btnConfirmDelete")
-      .addEventListener("click", async (e) => {
-        const jobIdToDelete = parseInt(e.target.dataset.jobId);
+document
+  .querySelector("#deleteModal #btnConfirmDelete")
+  .addEventListener("click", async (e) => {
+    const jobIdToDelete = parseInt(e.target.dataset.jobId);
 
-      console.log(jobIdToDelete);
+    console.log(jobIdToDelete);
 
-        if (!jobIdToDelete) {
-          alert("Error: Job ID is missing.");
-          return;
-        }
-
-        try {
-          const token = getCookie("api_token");
-
-          const res = await fetch(`/api/jobs/delete/${jobIdToDelete}`, {
-            method: "DELETE", // Use DELETE method for RESTful deletion
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          });
-
-          const json = await res.json();
-
-          const deleteModalInstance = bootstrap.Modal.getInstance(
-            document.getElementById("deleteModal"),
-          );
-          if (deleteModalInstance) deleteModalInstance.hide();
-          clearStuckBackdrop();
-
-          if (!res.ok || !json.status) {
-            alert(json.message || "Failed to delete job posting.");
-            return;
-          }
-
-          alert(`Job posting (ID: ${jobIdToDelete}) deleted successfully!`);
-
-          const postFeed = document.getElementById("post-feed");
-          postFeed.innerHTML = "";
-          page = 1;
-          isSearching = false;
-
-          window.location.href = '/';
-        } catch (err) {
-          console.error("Delete network error:", err);
-          alert("A network error occurred while trying to delete the job.");
-        }
-      });
-
-// UPDATE
-document.addEventListener("click", async (e) => {
-    const btn = e.target.closest(".btn-edit-detail");
-    if (!btn) return;
-
-    const jobIdToEdit = btn.dataset.jobId;
-    const editModalEl = document.getElementById("editJobModal");
-    const editForm = document.getElementById("edit-job-form");
-
-    if (!jobIdToEdit || !editForm) {
-      console.error("Job ID or Edit Form not found.");
+    if (!jobIdToDelete) {
+      alert("Error: Job ID is missing.");
       return;
     }
 
     try {
-      // Fetch data for the specific job
-      const res = await fetch(`/api/jobs/show/${jobIdToEdit}`);
+      const token = getCookie("api_token");
+
+      const res = await fetch(`/api/jobs/delete/${jobIdToDelete}`, {
+        method: "DELETE", // Use DELETE method for RESTful deletion
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+
       const json = await res.json();
 
-      if (!res.ok || !json.data?.job) {
-        alert(json.message || "Failed to load job data for editing.");
+      const deleteModalInstance = bootstrap.Modal.getInstance(
+        document.getElementById("deleteModal"),
+      );
+      if (deleteModalInstance) deleteModalInstance.hide();
+      clearStuckBackdrop();
+
+      if (!res.ok || !json.status) {
+        alert(json.message || "Failed to delete job posting.");
         return;
       }
 
-      const { job } = json.data;
-      
-      // Populate the form fields with job data
-      editForm.elements.description.value = job.description || '';
-      editForm.elements.employer_name.value = job.company || ''; // Assuming 'company' maps to 'employer_name'
-      editForm.elements.employer_logo.value = job.employer_logo || '';
-      editForm.elements.employer_website.value = job.employer_website || '';
-      editForm.elements.apply_link.value = JSON.parse(job.apply_link)[0]["apply_link"] || '';
-      editForm.elements.min_salary.value = job.min_salary ? job.min_salary.toString() : ''; 
-      editForm.elements.max_salary.value = job.max_salary ? job.max_salary.toString() : '';
-      editForm.elements.city.value = job.city || '';
-      editForm.elements.state.value = job.state || '';
-      editForm.elements.country.value = job.country || '';
-      editForm.elements.is_remote.checked = job.is_remote == 1;
-      
-      editForm.dataset.jobId = Number(jobIdToEdit); 
+      alert(`Job posting (ID: ${jobIdToDelete}) deleted successfully!`);
 
-      console.log(editForm.dataset.jobId);
-      
-      // Show the modal
-    const modalElement = document.getElementById('editJobModal');
-    
-    // Get the existing instance or create a new one if it doesn't exist yet
-    const editModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-    
-    editModal.show();
-      
+      const postFeed = document.getElementById("post-feed");
+      postFeed.innerHTML = "";
+      page = 1;
+      isSearching = false;
+
+      window.location.href = "/";
     } catch (err) {
-      console.error("Fetch job for edit error:", err);
-      alert("A network error occurred while loading job data. 1");
+      console.error("Delete network error:", err);
+      alert("A network error occurred while trying to delete the job.");
     }
   });
 
-  document
-    .getElementById("edit-job-form")
-    .addEventListener("submit", async (e) => {
-      e.preventDefault();
+// UPDATE
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".btn-edit-detail");
+  if (!btn) return;
 
-      const form = e.target;
-      const jobIdToUpdate = parseInt(form.dataset.jobId);
+  const jobIdToEdit = btn.dataset.jobId;
+  const editModalEl = document.getElementById("editJobModal");
+  const editForm = document.getElementById("edit-job-form");
 
-      const editModalEl = document.getElementById("editJobModal");
+  if (!jobIdToEdit || !editForm) {
+    console.error("Job ID or Edit Form not found.");
+    return;
+  }
 
-      if (!jobIdToUpdate) {
-        alert("Error: Job ID not set for update.");
+  try {
+    // Fetch data for the specific job
+    const res = await fetch(`/api/jobs/show/${jobIdToEdit}`);
+    const json = await res.json();
+
+    if (!res.ok || !json.data?.job) {
+      alert(json.message || "Failed to load job data for editing.");
+      return;
+    }
+
+    const { job } = json.data;
+
+    // Populate the form fields with job data
+    editForm.elements.description.value = job.description || "";
+    editForm.elements.employer_name.value = job.company || ""; // Assuming 'company' maps to 'employer_name'
+    editForm.elements.employer_logo.value = job.employer_logo || "";
+    editForm.elements.employer_website.value = job.employer_website || "";
+    editForm.elements.apply_link.value =
+      JSON.parse(job.apply_link)[0]["apply_link"] || "";
+    editForm.elements.min_salary.value = job.min_salary
+      ? job.min_salary.toString()
+      : "";
+    editForm.elements.max_salary.value = job.max_salary
+      ? job.max_salary.toString()
+      : "";
+    editForm.elements.city.value = job.city || "";
+    editForm.elements.state.value = job.state || "";
+    editForm.elements.country.value = job.country || "";
+    editForm.elements.is_remote.checked = job.is_remote == 1;
+
+    editForm.dataset.jobId = Number(jobIdToEdit);
+
+    console.log(editForm.dataset.jobId);
+
+    // Show the modal
+    const modalElement = document.getElementById("editJobModal");
+
+    // Get the existing instance or create a new one if it doesn't exist yet
+    const editModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+    editModal.show();
+  } catch (err) {
+    console.error("Fetch job for edit error:", err);
+    alert("A network error occurred while loading job data. 1");
+  }
+});
+
+document
+  .getElementById("edit-job-form")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const jobIdToUpdate = parseInt(form.dataset.jobId);
+
+    const editModalEl = document.getElementById("editJobModal");
+
+    if (!jobIdToUpdate) {
+      alert("Error: Job ID not set for update.");
+      return;
+    }
+
+    const payload = {
+      description: form.description.value.trim(),
+      employer_name: form.employer_name.value.trim(),
+      employer_logo: form.employer_logo.value.trim(),
+      employer_website: form.employer_website.value.trim(),
+      apply_link: form.apply_link.value.trim(),
+      min_salary: form.min_salary.value || null,
+      max_salary: form.max_salary.value || null,
+      city: form.city.value,
+      state: form.state.value,
+      country: form.country.value,
+      is_remote: form.is_remote.checked ? 1 : 0,
+    };
+
+    try {
+      const token = getCookie("api_token");
+
+      const res1 = await fetch(`/api/jobs/show/${jobIdToUpdate}`);
+      const json1 = await res1.json();
+
+      if (!res1.ok || !json1.data?.job) {
+        alert(json1.message || "Failed to load job data for editing.");
+        return;
+      }
+      const { job } = json1.data;
+
+      let apply_link_temp = payload.apply_link;
+      let apply_links = JSON.parse(job.apply_link);
+      apply_links[0]["apply_link"] = apply_link_temp;
+
+      payload.apply_link = JSON.stringify(apply_links);
+
+      console.log(payload);
+
+      const res = await fetch(`/api/jobs/update/${jobIdToUpdate}`, {
+        method: "PUT", // Use PUT method for update
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        alert(json.message || "Failed to update job");
         return;
       }
 
-      const payload = {
-        description: form.description.value.trim(),
-        employer_name: form.employer_name.value.trim(),
-        employer_logo: form.employer_logo.value.trim(),
-        employer_website: form.employer_website.value.trim(),
-        apply_link: form.apply_link.value.trim(),
-        min_salary: form.min_salary.value || null,
-        max_salary: form.max_salary.value || null,
-        city: form.city.value,
-        state: form.state.value,
-        country: form.country.value,
-        is_remote: form.is_remote.checked ? 1 : 0,
-      };
+      alert("Job updated successfully!");
 
-      try {
-        const token = getCookie("api_token");
+      // Hide the modal
+      const editJobModal = bootstrap.Modal.getInstance(editModalEl);
+      if (editJobModal) editJobModal.hide();
+      clearStuckBackdrop();
 
-        const res1 = await fetch(`/api/jobs/show/${jobIdToUpdate}`);
-        const json1 = await res1.json();
-  
-        if (!res1.ok || !json1.data?.job) {
-          alert(json1.message || "Failed to load job data for editing.");
-          return;
-        }
-        const { job } = json1.data;
+      // Refresh the feed
+      isSearching = false;
 
-        let apply_link_temp = payload.apply_link;
-        let apply_links = JSON.parse(job.apply_link);
-        apply_links[0]["apply_link"] = apply_link_temp;
-        
-        payload.apply_link = JSON.stringify(apply_links);
-        
-        console.log(payload);
-
-        const res = await fetch(`/api/jobs/update/${jobIdToUpdate}`, {
-          method: "PUT", // Use PUT method for update
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-          body: JSON.stringify(payload),
-        });
-
-        const json = await res.json();
-
-        if (!res.ok) {
-          alert(json.message || "Failed to update job");
-          return;
-        }
-
-        alert("Job updated successfully!");
-        
-        // Hide the modal
-        const editJobModal = bootstrap.Modal.getInstance(editModalEl);
-        if (editJobModal) editJobModal.hide();
-        clearStuckBackdrop();
-
-        // Refresh the feed
-        isSearching = false;
-
-        window.location.href = '/';
-
-      } catch (err) {
-        console.error("Update network error:", err);
-        alert("A network error occurred during job update.");
-      }
-    });
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Update network error:", err);
+      alert("A network error occurred during job update.");
+    }
+  });
