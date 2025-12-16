@@ -20,8 +20,9 @@ class RequireAuth
     }
 
     $token = $matches[1];
+    $tokenHash = hash('sha256', $token);
     $authModel = new Auth(DB::getInstance());
-    $user = $authModel->findByRememberToken(hash('sha256', $token));
+    $user = $authModel->findByRememberToken(hash('sha256', $tokenHash));
 
     if ($user)
       return $user;

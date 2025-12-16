@@ -47,6 +47,10 @@ class JobSeeder
     $companyId  = $this->insertCompany($job);
     $locationId = $this->insertLocation($job);
 
+    if($sourceId == 0 || $companyId == 0 || $locationId == 0){
+      return;
+    }
+
     $jobId = $this->insertJob($job, $companyId, $locationId, $sourceId);
 
     if ($jobId) {
