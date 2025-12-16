@@ -147,6 +147,7 @@ class Auth extends BaseAuth
       'expires' => time() + 3600 * 24,
       'path' => '/',
       'httponly' => false,
+      'secure' => true,
       'samesite' => 'Lax',
     ]);
 
@@ -154,6 +155,7 @@ class Auth extends BaseAuth
       'expires' => time() + 3600 * 24,
       'path' => '/',
       'httponly' => false,
+      'secure' => true,
       'samesite' => 'Lax',
     ]);
 
