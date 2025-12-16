@@ -8,13 +8,12 @@ function getCookie(name) {
 
   return cookieMap[name];
 }
-const callnameInput = document.querySelector('input[value="Callname"]');
-const usernameInput = document.querySelector('input[value="Username"]');
+const callnameInput = document.querySelector('input.update-usn');
 const bioTextarea = document.querySelector(
-  'textarea[placeholder="Tell us about yourself..."]',
+  'textarea.update-bio',
 );
-const educationInput = document.querySelector('input[value="Education"]');
-const profileForm = document.querySelector("form");
+const educationInput = document.querySelector('input.update-edu');
+const profileForm = document.querySelector("#updateProfile-form");
 const sidebarLogoutBtn = document.querySelector(
   ".sidebar .mt-auto .sidebar-box",
 );
@@ -94,7 +93,7 @@ async function handleFormSubmit(e) {
       },
       body: JSON.stringify({
         bio: payload.bio,
-        last_education: payload.education,
+        last_education: payload.education ?? '',
       }),
     });
 

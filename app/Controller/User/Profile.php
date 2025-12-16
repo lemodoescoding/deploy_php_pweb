@@ -130,10 +130,12 @@ class Profile
       exit;
     }
 
-    if ($this->user->updatePlaceholder($userId, $data['placeholder'])) {
-      Response::success(null, StatusCodes::OK, 'Profile updated');
+    $resp = $this->user->updatePlaceholder($userId, $data['placeholder']);
+
+    if ($resp) {
+      Response::success(['test' => $resp], StatusCodes::OK, 'Profile updated');
     } else {
-      Response::error(null, StatusCodes::BAD_REQUEST, 'Profile failed to update');
+      Response::error(['test' => $resp], StatusCodes::BAD_REQUEST, 'Profile failed to update');
     }
 
     exit;
@@ -152,13 +154,7 @@ class Profile
       exit;
     }
 
-    $this->profile->updateOrCreate($userId, [
-      'bio' => htmlspecialchars($data['bio']),
-      'last_education' => htmlspecialchars($data['last_education'])
-    ]);
-
-
-    if ($this->profile->updateOrCreate($userId, $data)) {
+    if ($this->profile->updateDetails($userId, $data['bio'], $data['last_education'])) {
       Response::success(null, StatusCodes::OK, 'Profile updated');
     } else {
       Response::error(null, StatusCodes::BAD_REQUEST, 'Profile failed to update');

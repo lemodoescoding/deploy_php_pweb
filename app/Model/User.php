@@ -93,21 +93,7 @@ class User extends Model
     $stmt->bindValue(':pl', htmlspecialchars(strtolower($placeholder)), PDO::PARAM_STR);
     $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
 
-    return $stmt->execute();
-  }
-
-  public function updateUsername(int $userId, string $username): bool
-  {
-    $stmt = $this->db->prepare("
-            UPDATE users
-            SET placeholder = :usn
-            WHERE id = :id
-        ");
-
-    $stmt->bindValue(':usn', strtolower($username), PDO::PARAM_STR);
-    $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
-
-    return $stmt->execute();
+    return (bool) $stmt->execute();
   }
 
   public function create(array $data): int

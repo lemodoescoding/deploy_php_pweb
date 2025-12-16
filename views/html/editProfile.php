@@ -173,21 +173,21 @@
           </div>
         </form>
 
-        <form>
+        <form id="updateProfile-form">
           <div class="d-flex align-items-center edit-input-group">
-            <input type="text" class="form-control form-control-plaintext edit-label flex-grow-1"
+            <input type="text" class="form-control form-control-plaintext edit-label flex-grow-1 update-usn"
               placeholder="Enter Callname..." value="Callname">
             <i class="fa-solid fa-pencil edit-icon"></i>
           </div>
 
           <div class="d-flex align-items-start edit-input-group" style="height: 100px; padding: 15px;">
-            <textarea class="form-control form-control-plaintext edit-label flex-grow-1"
+            <textarea class="form-control form-control-plaintext edit-label flex-grow-1 update-bio"
               placeholder="Tell us about yourself..." style="resize: none; height: 100%;">Bio</textarea>
             <i class="fa-solid fa-pencil edit-icon"></i>
           </div>
 
           <div class="d-flex align-items-center edit-input-group">
-            <input type="text" class="form-control form-control-plaintext edit-label flex-grow-1"
+            <input type="text" class="form-control form-control-plaintext edit-label flex-grow-1 update-edu"
               placeholder="Enter Education details..." value="Education">
             <i class="fa-solid fa-pencil edit-icon"></i>
           </div>
