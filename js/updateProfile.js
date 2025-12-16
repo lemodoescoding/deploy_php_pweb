@@ -43,7 +43,7 @@ async function loadUserData() {
     const response = await fetch(API_PROFILE_FETCH, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + token,
+        "X-Authorization": "Bearer " + token,
         "Content-Type": "application/json",
       },
     });
@@ -89,7 +89,7 @@ async function handleFormSubmit(e) {
     const response = await fetch(API_PROFILE_UPDATE, {
       method: "PUT", // or 'POST', depending on your backend REST convention
       headers: {
-        Authorization: "Bearer " + token,
+        "X-Authorization": "Bearer " + token,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -101,7 +101,7 @@ async function handleFormSubmit(e) {
     const response2 = await fetch(API_PROFILE_PLACEHOLDER, {
       method: "PUT",
       headers: {
-        Authorization: "Bearer " + token,
+        "X-Authorization": "Bearer " + token,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -136,7 +136,7 @@ function handleLogout() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + api_token,
+      "X-Authorization": "Bearer " + api_token,
     },
   })
     .then((res) => res.json())
@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch("/api/user/profile", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${getCookie("api_token")}`,
+        "X-Authorization": `Bearer ${getCookie("api_token")}`,
       },
     });
     const result = await response.json();
@@ -234,7 +234,7 @@ avatarInput.addEventListener("change", async () => {
         method: "POST",
         body: formData,
         headers: {
-          Authorization: `Bearer ${getCookie("api_token")}`,
+          "X-Authorization": `Bearer ${getCookie("api_token")}`,
         },
       });
 
@@ -259,5 +259,3 @@ avatarInput.addEventListener("change", async () => {
     }
   }
 });
-
-

@@ -27,7 +27,7 @@ async function deleteUser(userId) {
     const res = await fetch(`/api/user/delete/${userId}`, {
       method: "DELETE",
       headers: {
-        Authorization: "Bearer " + token,
+        "X-Authorization": "Bearer " + token,
       },
     });
 
@@ -63,7 +63,7 @@ async function promoteUser(userId) {
     const res = await fetch(`/api/user/promote/${userId}`, {
       method: "PUT",
       headers: {
-        Authorization: "Bearer " + token,
+        "X-Authorization": "Bearer " + token,
       },
     });
 
@@ -101,19 +101,19 @@ const updateStats = async () => {
 
     const res = await fetch("/api/admin/stats", {
       headers: {
-        Authorization: "Bearer " + token,
+        "X-Authorization": "Bearer " + token,
       },
     });
 
     const resJobs = await fetch("/api/jobs/page/1", {
       headers: {
-        Authorization: "Bearer " + token,
+        "X-Authorization": "Bearer " + token,
       },
     });
 
     const resApplies = await fetch("/api/applications/count", {
       headers: {
-        Authorization: "Bearer " + token,
+        "X-Authorization": "Bearer " + token,
       },
     });
 
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const res = await fetch("/api/admin/users", {
         headers: {
-          Authorization: "Bearer " + getCookie("api_token"),
+          "X-Authorization": "Bearer " + getCookie("api_token"),
         },
       });
 
@@ -328,7 +328,7 @@ document.addEventListener("DOMContentLoaded", function () {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + api_token,
+        "X-Authorization": "Bearer " + api_token,
       },
     })
       .then((res) => {
@@ -367,7 +367,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch("/api/user/profile", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${getCookie("api_token")}`,
+        "X-Authorization": `Bearer ${getCookie("api_token")}`,
       },
     });
     const result = await response.json();

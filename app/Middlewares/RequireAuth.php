@@ -16,7 +16,7 @@ class RequireAuth
   {
     if (function_exists('getallheaders')) {
       $headers = getallheaders();
-      $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
+      $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $headers['X-Authorization'] ?? null;
     } else {
       $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? null;
     }
@@ -24,8 +24,8 @@ class RequireAuth
     // Check if the header was successfully retrieved
     if (!$authHeader || !preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
       Response::error([
-        'headers' => $headers ?? [],
-        'authHeader' => $authHeader ?? '',
+        // 'headers' => $headers ?? [],
+        // 'authHeader' => $authHeader ?? '',
       ], StatusCodes::UNAUTHORIZED, "Unauthorized, missing API Token");
       return false;
     }

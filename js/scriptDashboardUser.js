@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const res = await fetch("/api/applications", {
       credentials: "include",
       headers: {
-        Authorization: "Bearer " + getCookie("api_token"),
+        "X-Authorization": "Bearer " + getCookie("api_token"),
       },
     });
 
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + api_token,
+        "X-Authorization": "Bearer " + api_token,
       },
     })
       .then((res) => {
@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch("/api/user/profile", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${getCookie("api_token")}`,
+        "X-Authorization": `Bearer ${getCookie("api_token")}`,
       },
     });
     const result = await response.json();

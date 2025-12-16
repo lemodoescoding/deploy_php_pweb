@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
+            "X-Authorization": "Bearer " + token,
           },
           body: JSON.stringify(payload),
         });
@@ -309,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + api_token,
+        "X-Authorization": "Bearer " + api_token,
       },
     })
       .then((res) => {
@@ -383,7 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const res = await fetch(`/api/jobs/apply/${jobIdToApply}`, {
           method: "POST",
           headers: {
-            Authorization: "Bearer " + token,
+            "X-Authorization": "Bearer " + token,
           },
         });
 
@@ -430,7 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const res = await fetch(`/api/jobs/apply/${jobIdToApply}`, {
           method: "POST",
           headers: {
-            Authorization: "Bearer " + token,
+            "X-Authorization": "Bearer " + token,
           },
         });
 
@@ -511,7 +511,7 @@ document
       const res = await fetch(`/api/jobs/delete/${jobIdToDelete}`, {
         method: "DELETE", // Use DELETE method for RESTful deletion
         headers: {
-          Authorization: "Bearer " + token,
+          "X-Authorization": "Bearer " + token,
         },
       });
 
@@ -656,7 +656,7 @@ document
         method: "PUT", // Use PUT method for update
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
+          "X-Authorization": "Bearer " + token,
         },
         body: JSON.stringify(payload),
       });
