@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         max_salary: form.max_salary.value || null,
         city: form.city.value,
         state: form.state.value,
-        country: form.state.value,
+        country: form.country.value,
         is_remote: form.is_remote.checked ? 1 : 0,
       };
 

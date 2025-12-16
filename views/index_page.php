@@ -8,7 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/styleIndex.css" rel="stylesheet">
 
-    <style>
+  <style>
     .profile-image-placeholder {
       width: 100px;
       height: 100px;
@@ -23,7 +23,7 @@
       box-shadow: 0 0 0 2px #ccc;
       /* Ring effect */
     }
-    </style>
+  </style>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
@@ -89,7 +89,7 @@
         <button id="post-button" style="display: none; visibility: hidden;" class="btn post-btn position-fixed">
           Post +
         </button>
-      <?php endif;?>
+      <?php endif; ?>
     </main>
   </div>
 
@@ -97,7 +97,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-         <h5 class="modal-title">Save Job</h5>
+          <h5 class="modal-title">Save Job</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
