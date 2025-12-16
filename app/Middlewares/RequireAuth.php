@@ -15,14 +15,14 @@ class RequireAuth
   {
     $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
     if (!preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
-      // Response::error(null, StatusCodes::UNAUTHORIZED, "Unauthorized");
+      Response::error(null, StatusCodes::UNAUTHORIZED, "Unauthorized, missing API Token");
       return false; // stop further execution
     }
 
     $token = $matches[1];
     $tokenHash = hash('sha256', $token);
     $authModel = new Auth(DB::getInstance());
-    $user = $authModel->findByRememberToken(hash('sha256', $tokenHash));
+    $user = $authModel->findByRememberToken($tokenHash);
 
     if ($user)
       return $user;

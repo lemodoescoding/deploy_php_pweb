@@ -13,6 +13,8 @@ function getCookie(name) {
   return cookieMap[name];
 }
 
+console.log(getCookie("api_token"));
+
 function debounce(fn, delay = 500) {
   let timer;
 
@@ -42,20 +44,19 @@ const searchBar = document.querySelector("#search-bar");
 const logoutBtn = document.querySelector("#btn-logout");
 
 const currentAvatar = document.getElementById("current-avatar");
-const placeholderIcon = document.getElementById("photo-placeholder-icon")
+const placeholderIcon = document.getElementById("photo-placeholder-icon");
 
 document.addEventListener("DOMContentLoaded", () => {
   const postJobModal = new bootstrap.Modal(
     document.getElementById("postJobModal"),
   );
 
-
   const postBtn = document.getElementById("post-button");
-    document.getElementById("post-button").addEventListener("click", () => {
-      postJobModal.show();
-    });
+  document.getElementById("post-button").addEventListener("click", () => {
+    postJobModal.show();
+  });
 
-    document
+  document
     .getElementById("post-job-form")
     .addEventListener("submit", async (e) => {
       e.preventDefault();
