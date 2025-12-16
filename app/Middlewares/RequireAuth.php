@@ -13,7 +13,13 @@ class RequireAuth
 {
   public static function getUser(): array | bool
   {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+
+    if (is_null($authHeader)) {
+      Response::error(null, StatusCodes::UNAUTHORIZED, "Unauthorized, missing API Token - 2");
+      return false;
+    }
+
     if (!preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
       Response::error(null, StatusCodes::UNAUTHORIZED, "Unauthorized, missing API Token");
       return false; // stop further execution
