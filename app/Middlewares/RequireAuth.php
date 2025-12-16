@@ -29,6 +29,14 @@ class RequireAuth
       ], StatusCodes::UNAUTHORIZED, "Unauthorized, missing API Token");
       return false;
     }
+    // Check if the header was successfully retrieved
+    if (!$authHeader || !preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+      Response::error([
+        'headers' => $headers ?? [],
+        'authHeader' => $authHeader ?? '',
+      ], StatusCodes::UNAUTHORIZED, "Unauthorized, missing API Token");
+      return false;
+    }
 
     $token = $matches[1];
     $tokenHash = hash('sha256', $token);
