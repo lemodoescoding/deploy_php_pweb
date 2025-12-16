@@ -177,6 +177,7 @@ class OAuth extends BaseAuth
       'expires' => time() + 3600 * 24,
       'path' => '/',
       'httponly' => false,
+      'secure' => true,
       'samesite' => 'Lax',
     ]);
 
@@ -184,12 +185,13 @@ class OAuth extends BaseAuth
       'expires' => time() + 3600 * 24,
       'path' => '/',
       'httponly' => false,
+      'secure' => true,
       'samesite' => 'Lax',
     ]);
 
     $redirect = '/dashboard';
 
-    if($user['role'] == 'admin') {
+    if ($user['role'] == 'admin') {
       $redirect = '/admin';
     }
 
